@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>A-Frame VR全画面起動</title>
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>  
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      
+      .button-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        z-index: 100;
+      }
+      
+      #startButton {
+        padding: 15px 30px;
+        font-size: 24px;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      
+      #startButton:hover {
+        background-color: #3367d6;
+      }
+      
+      #vr-scene {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="button-container">
+      <button id="startButton">VRを起動する</button>
+    </div>
+    
+    <a-scene id="vr-scene" embedded vr-mode-ui="enabled: true">
+      <a-sky src="image.jpg"></a-sky>
+    </a-scene>
+    
+    <script>
+      document.getElementById('startButton').addEventListener('click', function() {
+        const scene = document.getElementById('vr-scene');
+        
+        // シーンを表示
+        scene.style.display = 'block';
+        
+        // A-Frameの全画面モードを使用
+        const sceneEl = document.querySelector('a-scene');
+        
+        // A-FrameのenterVRメソッドを使用
+        if (sceneEl.is('vr-mode')) {
+          sceneEl.exitVR();
+        } else {
+          sceneEl.enterVR();
+        }
+        
+        // ボタンを非表示
+        document.querySelector('.button-container').style.display = 'none';
+        
+        // A-Frameの全画面表示を開始
+        if (!document.fullscreenElement) {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+          }
+        }
+      });
+      
+      // シーンがロードされたときのイベント
+      document.querySelector('a-scene').addEventListener('loaded', function() {
+        console.log('A-Frameシーンがロードされました');
+      });
+      
+      // VRモードに入ったときのイベント
+      document.querySelector('a-scene').addEventListener('enter-vr', function() {
+        console.log('VRモードに入りました');
+      });
+      
+      // VRモードから出たときのイベント
+      document.querySelector('a-scene').addEventListener('exit-vr', function() {
+        console.log('VRモードから出ました');
+        // VRから出たときにボタンを再表示
+        document.querySelector('.button-container').style.display = 'block';
+        document.getElementById('vr-scene').style.display = 'none';
+      });
+    </script>
+  </body>
+</html>
